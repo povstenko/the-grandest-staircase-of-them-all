@@ -1,16 +1,20 @@
+from functools import reduce
+
 def solution(n):
-    def count_stairs(height, left):
-        if left == 0:
-            return 1
+    cache = {}
+    
+    def count_stairs(start, left):
+        if (start, left) not in cache:
+            if left == 0:
+                cache[(start, left)] = 1
+            elif left <= start:
+                cache[(start, left)] = 0
+            else:
+                cache[(start, left)] = reduce(lambda x, item: x + count_stairs(item, left - item), range(start + 1, left + 1), 0)
 
-        if left < height:
-            return 0
-
-        return count_stairs(height + 1, left - height) + count_stairs(height + 1, left)
-    if n <= 200:
-        return str(count_stairs(1, n) - 1)
-    else:
-        return 0
+        return cache[(start, left)]
+    
+    return count_stairs(0, n) - 1
 
 print(solution(3))
 print(solution(4))
